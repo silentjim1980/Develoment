@@ -34,3 +34,14 @@ What is Ollama
 Ollama is an open-source tool mainly written in Go lang (89%) that runs open LLMs on your local machine (or a server). It acts like a bridge between any open LLM and your machine, not only running them but also providing an API layer on top of them so that another application or service can use them.
 
 Ollama is a user-friendly and powerful software for running LLMs locally. It hides the complexities of LLMs, packaging them to be accessible and easily customizable with a model file. There are alternatives to Ollama, like vllm and aphrodite, but Ollama is surely the most popular one. Ollama provides a clean, user-friendly interface that allows you to interact directly with LLMs, tailoring the experience to your needs.
+
+** One key note that I feel needs to be addressed in installing Ollama.
+By default, running the OllamaSetup.exe Just installs it "willy nilly" onto your system, typically C:\Users\[User]\appdata. I did NOT want this & wanted it contained to 1 drive.
+Nowhere on Ollamas main download page is this mentioned & the installer does NOT give you an option of choosing where to install Ollama.
+
+Changing Install Location
+To install the Ollama application in a location different than your home directory, start the installer with the following flagOllamaSetup.exe /DIR="d:\some\location"
+
+so you need to download, copy, and paste the OllamaSetup.exe (if you opt for the .zip then extract it to the directory of your choice). Then open a cmd.exe, prompt window, CD into the drive/directory if you need to.
+Then you want to run OllamaSetup.exe or Ollama.exe /DIR="[The directory you are in or want it to install to] \ [The main folder i.e Ollama] \ [sub folder if you so choose]. The result should be
+i.e. OllamaSetup.exe DIR="D:\AI\Ollama". Then Ollama will install to the directory that you specify.
