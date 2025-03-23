@@ -9,3 +9,7 @@ what, if anything AI could do to help them get from an idea into reality.
 
 These projects were again developed with xAI @Grok or chatGPT & python.
 So the requirements would be one of those 2, your mind & flavor of coding you do, & python.
+
+I'm not a coder, I don't use Github a lot, and I don't know the "etiquette". I'm just sharing my ideas & projects that I've
+created. It's upon you the user to deduce or figure out how my projects work, because I didn't exactly document the entire process
+& don't remember certain steps/requirements & because I didn't intend to release them but changed my mind. 
