@@ -5,6 +5,7 @@ sources as a camera source for Blue Iris.
 What is Blue Iris?
 It's Video security & Webcam software.
 Find out more here: https://blueirissoftware.com/
+
 If you are looking into security camera software for your home or business [not sponsored]
 
 Blue Iris supports different streaming protocols i.e. rtsp, rtmp, onvif, & more.
@@ -31,3 +32,9 @@ Using MediaMTX & yt-dlp I can take live streams from a variety of different sour
 
 I'm sure there are other ways to do this, this probably isn't the "correct" or right way. This is just
 the way I did it.
+
+I'll give 2 examples of what I wanted to do.
+1. There are a multitude of live streams out there. In particular, I wanted to be able to watch a particular 24/7/365 stream & not have to constantly have a separate browser window open to watch the stream
+when I already have a browser/monitor dedicated to the Blue Iris Web UI. Why not just add that live stream as a "camera" to the Blue Iris software? Well, I couldn't, hence this project.
+2. I wanted to be able to take a window (application), capture it & also add it as a camera source for Blue Iris.
+This project allows me to do both those things & probably much, much more if I so choose too.
