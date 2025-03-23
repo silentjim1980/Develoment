@@ -30,3 +30,7 @@ Added detailed comments to every line of code for clarity and maintainability.
 
 The final script is a fully functional, customizable chat console with a visually engaging animation feature, suitable for interacting with the Ollama chatbot in a user-friendly way.
 
+What is Ollama
+Ollama is an open-source tool mainly written in Go lang (89%) that runs open LLMs on your local machine (or a server). It acts like a bridge between any open LLM and your machine, not only running them but also providing an API layer on top of them so that another application or service can use them.
+
+Ollama is a user-friendly and powerful software for running LLMs locally. It hides the complexities of LLMs, packaging them to be accessible and easily customizable with a model file. There are alternatives to Ollama, like vllm and aphrodite, but Ollama is surely the most popular one. Ollama provides a clean, user-friendly interface that allows you to interact directly with LLMs, tailoring the experience to your needs.
