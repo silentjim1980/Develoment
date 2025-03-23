@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi YouTube Player</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous">
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script defer src="script.js"></script>
+    <style>
+        :root {
+            --primary-bg: #1a1a1a;
+            --secondary-bg: #2c2c2c;
+            --accent-color: #00aaff;
+            --text-color: #e0e0e0;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+            --transition: all 0.3s ease;
+            --error-color: #ff5555;
+            --success-color: #55ff55;
+            --button-bg: #555;
+            --button-hover-bg: #777;
+        }
+
+        [data-theme="light"] {
+            --primary-bg: #f0f0f0;
+            --secondary-bg: #ffffff;
+            --text-color: #333333;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --button-bg: #cccccc;
+            --button-hover-bg: #aaaaaa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--primary-bg) 0%, var(--secondary-bg) 100%);
+            color: var(--text-color);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+            transition: background var(--transition);
+        }
+
+        .header-row {
+            grid-area: header;
+            background: var(--secondary-bg);
+            padding: 1rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-row h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-color);
+            margin: 0;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            color: var(--accent-color);
+            transform: scale(1.1);
+        }
+
+        .video-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            column-gap: 10px;
+            row-gap: 10px;
+            flex-grow: 0;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            margin: 20px 10px;
+        }
+
+        .video-outer {
+            position: relative;
+            width: calc(50% - 5px);
+            max-width: 920px;
+            transition: width var(--transition);
+            background: #333;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .player-wrapper {
+            width: 100%;
+            aspect-ratio: 16 / 9; /* Maintain 16:9 aspect ratio */
+        }
+
+        .player-frame {
+            width: 100%;
+            height: 100%;
+            background: #222;
+        }
+
+        #control_panel {
+            text-align: center;
+            margin-bottom: 10px;
+            padding: 15px;
+            background: var(--secondary-bg);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+
+        #control_panel .btn {
+            margin: 5px;
+            padding: 8px 15px;
+            font-size: 14px;
+            border-radius: 20px;
+            background: var(--button-bg);
+            border: none;
+            color: var(--text-color);
+            transition: background var(--transition), transform 0.1s;
+        }
+
+        #control_panel .btn:hover {
+            background: var(--button-hover-bg);
+            transform: scale(1.05);
+        }
+
+        #control_panel .btn:active {
+            transform: scale(0.95);
+        }
+
+        .control-row {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            max-width: 1600px;
+            margin: 0 auto 15px;
+        }
+
+        .input-section {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 0.5rem;
+            width: 100%;
+        }
+
+        .url-input {
+            background: #2a2a2a;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            box-shadow: inset var(--shadow);
+        }
+
+        [data-theme="light"] .url-input {
+            background: #e0e0e0;
+        }
+
+        .url-input label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            text-align: center;
+        }
+
+        #videoUrls {
+            width: 100%;
+            height: 100px;
+            background: transparent;
+            color: var(--text-color);
+            border: none;
+            padding: 0.5rem;
+            font-size: 0.9rem;
+            resize: none;
+            border-radius: 0.25rem;
+            transition: box-shadow var(--transition);
+        }
+
+        #videoUrls:focus {
+            box-shadow: 0 0 8px var(--accent-color);
+            outline: none;
+        }
+
+        .saved-links {
+            background: #2a2a2a;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            box-shadow: inset var(--shadow);
+            /* Removed max-height and overflow-y to prevent double scrollbar */
+        }
+
+        [data-theme="light"] .saved-links {
+            background: #e0e0e0;
+        }
+
+        .saved-links label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            text-align: center;
+        }
+
+        #savedLinks {
+            overflow-y: auto; /* Single scrollbar */
+            background: transparent;
+            color: var(--text-color);
+            padding: 0;
+            max-height: 80px; /* Reduced to show scrollbar with fewer links */
+        }
+
+        #savedLinks a {
+            color: var(--accent-color);
+            text-decoration: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.25rem;
+            border-radius: 0.25rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+            min-height: 1.5em; /* Ensure minimum height for each link */
+        }
+
+        #savedLinks a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .saved-links a .delete-link {
+            color: var(--error-color);
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: var(--transition);
+            margin-left: 5px;
+        }
+
+        .saved-links a .delete-link:hover {
+            color: #cc0000;
+            transform: scale(1.2);
+        }
+
+        .error-message {
+            color: var(--error-color);
+            font-size: 14px;
+            margin-top: 10px;
+            text-align: center;
+            background: rgba(40, 40, 0, 0.8);
+            padding: 5px 10px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .remove-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--error-color);
+            border: none;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background var(--transition), transform 0.1s;
+        }
+
+        .remove-btn:hover {
+            background: #cc0000;
+            transform: scale(1.1);
+        }
+
+        .remove-btn:active {
+            transform: scale(0.9);
+        }
+
+        .footer-row {
+            grid-area: footer;
+            background: var(--secondary-bg);
+            padding: 1rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .footer-row p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .video-outer {
+                width: 100%;
+            }
+            .input-section {
+                grid-template-columns: 1fr;
+            }
+            #videoUrlsContainer {
+                position: relative;
+                left: 0;
+                top: 0;
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+            #savedLinksContainer {
+                width: 100%;
+            }
+            #savedLinks {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header-row">
+        <h1>Multi YouTube Player</h1>
+        <button class="theme-toggle" aria-label="Toggle theme">
+            <i class="fas fa-moon"></i>
+        </button>
+    </div>
+    <div id="control_panel">
+        <div class="control-row">
+            <div class="input-section">
+                <div id="videoUrlsContainer" class="url-input form-group">
+                    <label for="videoUrls">Add YouTube URLs</label>
+                    <textarea class="form-control" id="videoUrls" placeholder="One URL per line (YouTube only)"></textarea>
+                </div>
+                <div class="saved-links">
+                    <label>Saved Links</label>
+                    <div id="savedLinks"></div>
+                </div>
+            </div>
+        </div>
+        <button class="btn btn-secondary loadbtn" id="loadBtn">
+            <i class="fas fa-upload"></i> Load
+        </button>
+        <button class="btn btn-secondary refreshbtn" onclick="refreshAll()">
+            <i class="fas fa-undo"></i> Refresh
+        </button>
+        <button class="btn btn-secondary playbtn" onclick="playAll()">
+            <i class="fas fa-play"></i> Play
+        </button>
+        <button class="btn btn-secondary pausebtn" onclick="pauseAll()">
+            <i class="fas fa-pause"></i> Pause
+        </button>
+        <button class="btn btn-secondary mutebtn" onclick="muteAll()">
+            <i class="fas fa-volume-mute"></i> Mute
+        </button>
+        <button class="btn btn-secondary unmutbtn" onclick="unmuteAll()">
+            <i class="fas fa-volume-up"></i> Unmute
+        </button>
+        <button class="btn btn-secondary savebtn" onclick="saveToFile()">
+            <i class="fas fa-save"></i> Save to File
+        </button>
+        <button class="btn btn-secondary clearbtn" onclick="clearSavedLinks()">
+            <i class="fas fa-trash"></i> Clear Saved Links
+        </button>
+        <div id="errorMessage" class="error-message"></div>
+    </div>
+    <div id="videoContainer" class="video-container"></div>
+    <div class="footer-row">
+        <p>Powered by xAI | @SilentJim1980 | © 2025</p>
+    </div>
+</body>
+</html>
